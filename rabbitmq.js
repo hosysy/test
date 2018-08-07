@@ -15,7 +15,7 @@ connection.on('ready', function () {
       durable: true
     }, function (q) {
     console.log('ready2')
-    for (let i = 0; i < 100000; i++) {
+    for (let i = 0; i < 1; i++) {
       connection.publish('BalanceDeduction', {
         messageId: 'M4V20180307110044DTYYJBBYLPQZAA2',
         groupId: 'G4V20180307100746TDRFRUQ9HYCLGOM',

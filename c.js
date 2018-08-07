@@ -3,7 +3,7 @@ let Joi = require('joi')
 const moment = require('moment-timezone')
 const mongo = require('@nurigo/mongo')
 const keygen = require('keygenerator')
-const { Group, Message } = require('@nurigo/mongo/models')
+const { Group, Message } = require('./models')
 
 async function funA() {
   const groupId = createGroupId()

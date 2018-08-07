@@ -3,7 +3,7 @@ let Joi = require('joi')
 const moment = require('moment-timezone')
 const mongo = require('@nurigo/mongo')
 const keygen = require('keygenerator')
-const { Group, Message, BalanceHistory } = require('@nurigo/mongo/models')
+const { Group, Message, BalanceHistory } = require('./models')
 
 async function funA() {
   let id = createMessageId()
@@ -129,16 +129,155 @@ function getArg() {
   })
 }
 
+async function testf(skip = 0, limit = 1000, i = 0) {
+  return new Promise(async (resolve, reject) => {
+    Group.collection.aggregate([
+      {
+        $match: {
+          status: 'SENDING'
+        }
+      },
+      { $sort: { _id: 1 } },
+      { $skip: skip },
+      { $limit: limit }
+    ],
+    { allowDiskUse: true },
+    async (err, cursor) => {
+      if (err) return reject(err)
+
+      // 데이터를 toArray로 변환하고 다음데이터가 있는지 확인
+      const hasNext = await cursor.hasNext()
+      const data = await cursor.toArray()
+      if (data.length < 1) {
+        console.log('success!!!', skip, limit, i)
+        return resolve('suc')
+      }
+
+      if (hasNext) {
+        console.log(`---------- CHECK data ----------`, data.length)
+
+        console.log('continue', skip, limit, i)
+        return testf(skip += limit, limit, i += 1)
+      }
+      console.log('success!!', skip, limit, i)
+
+      resolve('success')
+    })
+  })
+}
+
+async function saveBH() {
+  await new BalanceHistory({
+      accountId: '214727',
+      oldBalance: 0,
+      newBalance: 100,
+      oldPoint: 0,
+      newPoint: 0,
+      balanceAmount: 100,
+      pointAmount: 0,
+      type: 'MANUAL',
+      dateCreated: new Date('2018-09-20 13:40:13')
+  }).save()
+  await new BalanceHistory({
+      accountId: '214727',
+      oldBalance: 100,
+      newBalance: 0,
+      oldPoint: 0,
+      newPoint: 0,
+      balanceAmount: -100,
+      pointAmount: 0,
+      type: 'MANUAL',
+      dateCreated: new Date('2018-09-20 13:40:13')
+  }).save()
+  await new BalanceHistory({
+      accountId: '214727',
+      oldBalance: 0,
+      newBalance: 0,
+      oldPoint: 0,
+      newPoint: 100,
+      balanceAmount: 0,
+      pointAmount: 100,
+      type: 'MANUAL',
+      dateCreated: new Date('2018-09-20 13:40:13')
+  }).save()
+  await new BalanceHistory({
+      accountId: '214727',
+      oldBalance: 0,
+      newBalance: 0,
+      oldPoint: 100,
+      newPoint: 0,
+      balanceAmount: 0,
+      pointAmount: -100,
+      type: 'MANUAL',
+      dateCreated: new Date('2018-09-20 13:40:13')
+  }).save()
+  await new BalanceHistory({
+      accountId: '214727',
+      oldBalance: 0,
+      newBalance: 1000,
+      oldPoint: 0,
+      newPoint: 2000,
+      balanceAmount: 1000,
+      pointAmount: 2000,
+      type: 'MANUAL',
+      dateCreated: new Date('2018-09-20 13:40:13')
+  }).save()
+  await new BalanceHistory({
+      accountId: '214727',
+      oldBalance: 1000,
+      newBalance: 2000,
+      oldPoint: 1000,
+      newPoint: 2000,
+      balanceAmount: 1000,
+      pointAmount: -1000,
+      type: 'MANUAL',
+      dateCreated: new Date('2018-09-20 13:40:13')
+  }).save()
+}
+
 async function funB() {
   try {
-    await mongo.init({'host':'localhost', "database": "test2"})
+    await mongo.init({'host':'localhost', "database": "msgv4"})
 
+    // await testf()
+    
+
+    // await BalanceHistory.remove()
+    // await saveBH()
+
+    const res = await BalanceHistory.findByCondition({
+      balanceDeduct: 'false',
+      pointRecharge: 'false',
+    })
+    console.log(`---------- CHECK res ----------`, res)
+    /*
     const result = await BalanceHistory.findOneAndUpdate(
       { accountId: '214727000' },
       { $inc: { beforeBalance: 100 } },
-      { upsert: true, new: true }
+      { upsert: true, new: true, projection: { _id: 0 } }
     )
     console.log(`---------- CHECK result ----------`, result)
+
+    console.log(await BalanceHistory.find({}, { _id: 0 }))
+    */
+
+    
+
+    /*
+    await BalanceHistory.collection.aggregate([
+      {
+        $project: {
+          '_id': 0,
+          customId: '$_id',
+          accountId: 1
+        }
+      }
+    ], async (err, cursor) => {
+      if (err) throw err
+      const res = await cursor.next()
+      console.log(`---------- CHECK res ----------`, res)
+    })
+    */
 
     /*const lastMonth = moment().subtract(2, 'month')
     const startDate = lastMonth.clone().startOf('month')
