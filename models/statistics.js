@@ -14,7 +14,8 @@ const statisticsSchema = new mongoose.Schema({
   count: { type: Object, required: true },
   appId: { type: String, default: null },
   balance: { type: Number, default: 0 },
-  point: { type: Number, default: 0 }
+  point: { type: Number, default: 0 },
+  profit: { type: Number, default: 0 }
 }, {
   id: false,
   versionKey: false,

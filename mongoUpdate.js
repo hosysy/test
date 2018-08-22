@@ -22,13 +22,37 @@ async function funB() {
       countryName: 'b',
       count: { a: 1, b: 2 }
     }).save()
+    await new Pricing({
+      _id: 'b',
+      sms: 100,
+      countryId: 'a',
+      countryName: 'b',
+      count: { a: 1, b: 2 }
+    }).save()
+    await new Pricing({
+      _id: 'c',
+      sms: 100,
+      countryId: 'a',
+      countryName: 'b',
+      count: { a: 1, b: 2 }
+    }).save()
+
+    let type = 'LMS'
+    const key = `count.${type.toLowerCase()}.82`
+    console.log(`---------- CHECK key ----------`, key)
+
+    const $inc = {}
+    $inc[key] = 1
+    console.log(`---------- CHECK $inc ----------`, $inc)
 
     const res = await Pricing.updateOne({ sms: 100 }, {
       $set: {
-        'count.c': 2
-      }
+        sms: 300
+      },
+      $inc
     })
     console.log(`---------- CHECK res ----------`, res)
+    if (!res.n) console.error('testERROR')
 
     /*
     await Pricing.findOneAndUpdate({ cash: 1000 }, {
@@ -43,8 +67,7 @@ async function funB() {
 
     // await Pricing({ point: 500 }).save()
 
-    console.log(await Pricing.find())
-
+    console.log(require('util').inspect(await Pricing.find(), { depth: 5 }))
     /*
     const res1 = await Pricing.updateOne({
       countryId: '82'

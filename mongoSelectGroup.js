@@ -8,25 +8,6 @@ const { Group, Message } = require('./models')
 async function funA() {
   const groupId = createGroupId()
   let id = createMessageId()
-
-  await new Group({
-    "_id": groupId,
-    groupId,
-    "app": {"appId":null,"profit":0,"version":null},
-    "sdkVersion":"JS 4.0.0",
-    "osPlatform":"linux",
-    "log":[],
-    "status":"SENDING",
-    "scheduledDate":null,
-    "dateSent":"2018-08-13T02:46:55.307Z",
-    "dateCompleted":null,
-    "isRefunded":false,
-    "accountId":"486",
-    "apiVersion":"4",
-    "price":{"82":{"sms":20,"lms":50,"mms":200,"ata":19,"cta":13,"dateCreated":"2018-07-31T23:13:44.945Z","dateUpdated":"2018-07-31T23:13:44.945Z"}}
-  }).save()
-
-
   let messages = [
     {
       "_id": id,
@@ -46,7 +27,7 @@ async function funA() {
         "buttonUrl": "test",
         "disableSms": "true"
       },
-      "statusCode": "3000"
+      "statusCode": "4000"
     }
   ]
 
@@ -62,18 +43,18 @@ async function funA() {
 
   for (let i = 0; i < 50; i++) {
     let id = createMessageId()
-    // let groupId = createGroupId()
+    let groupId = createGroupId()
 
     messages.push(Object.assign({}, messages[0], { "_id": id, "messageId": id, groupId, replacement: true }))
-    // groups.push(Object.assign({}, groups[0], { "_id": groupId, groupId }))
+    groups.push(Object.assign({}, groups[0], { "_id": groupId, groupId }))
   }
 
   for (let i = 0; i < 20; i++) {
     let id = createMessageId()
-    // let groupId = createGroupId()
+    let groupId = createGroupId()
 
     messages.push(Object.assign({}, messages[0], { "_id": id, "messageId": id, groupId}))
-    // groups.push(Object.assign({}, groups[0], { "_id": groupId, groupId, isRefunded: true }))
+    groups.push(Object.assign({}, groups[0], { "_id": groupId, groupId, isRefunded: true }))
   }
 
   /*
@@ -85,9 +66,7 @@ async function funA() {
   */
 
   try {
-    console.log('chekc groupId', groupId)
-    console.log(`---------- CHECK messages ----------`, messages)
-    // await Group.insertMany(groups)
+    await Group.insertMany(groups)
     await Message.insertMany(messages)
   } catch(err) {
     console.log('check err', err)

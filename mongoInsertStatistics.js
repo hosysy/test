@@ -12,13 +12,14 @@ async function funA() {
   date.setSeconds(0)
   date.setMilliseconds(0)
 
+  console.log(`---------- CHECK date ----------`, date)
   const data = [
     {
       accountId: '214727',
       date,
       count: {
         '4000': {
-          'sms': 0,
+          'sms': 1,
           'lms': 1,
           'mms': 1,
           'ata': 1,
@@ -39,7 +40,7 @@ async function funA() {
           'cta': 50
         }
       },
-      balance: 0,
+      balance: 100,
       point: 200
     }
   ]
@@ -48,10 +49,8 @@ async function funA() {
     const keyDate = new Date(data[0].date.getTime())
     keyDate.setMilliseconds(+i)
     data.push(Object.assign({}, data[0], { date: keyDate }))
-    if (i < 10) data.push(Object.assign({}, data[0], { profit: 10 }))
   }
 
-  /*
   for (let i = 10000; i < 15000; i++) {
     const keyDate = new Date(data[0].date.getTime())
     keyDate.setMilliseconds(+i)
@@ -63,7 +62,6 @@ async function funA() {
     keyDate.setMilliseconds(+i)
     data.push(Object.assign({}, data[0], { date: keyDate, appId: 'K33791', count: { '4000': { 'lms': 100 } } }))
   }
-  */
 
   /*
   for (let i = 0; i < 5000; i++) {
@@ -90,6 +88,7 @@ async function funA() {
   }
   */
 
+
   try {
     console.log('data.length : ', data.length)
     await Statistics.insertMany(data)
@@ -102,27 +101,7 @@ async function test() {
   try {
     await mongo.init({'host':'localhost', "database": "msgv4"})
 
-    // await funA()
-
-
-    const result = await Statistics.collection.aggregate([
-      {
-        $group: {
-          _id: {
-            appId: '$appId'
-          },
-          sms: { $sum: '$count.4000.sms' },
-          lms: { $sum: '$count.4000.lms' },
-          mms: { $sum: '$count.4000.mms' },
-          cta: { $sum: '$count.4000.cta' },
-          ata: { $sum: '$count.4000.ata' },
-          balance: { $sum: '$balance' },
-          profit: { $sum: '$profit' },
-          balacne2: { $sum: { $cond: { if: { $gte: ['$balance', 1] }, then: '$balance', else: 0 } } }
-        }
-      }
-    ]).toArray()
-    console.log(`---------- CHECK result ----------`, result)
+    await funA()
 
     console.log('check items count')
     console.log(await Statistics.count())

@@ -245,21 +245,21 @@ async function funB() {
     // await BalanceHistory.remove()
     // await saveBH()
 
+    /*
     const res = await BalanceHistory.findByCondition({
       balanceDeduct: 'false',
       pointRecharge: 'false',
     })
     console.log(`---------- CHECK res ----------`, res)
-    /*
-    const result = await BalanceHistory.findOneAndUpdate(
+    */
+    const result = await BalanceHistory.updateOne(
       { accountId: '214727000' },
-      { $inc: { beforeBalance: 100 } },
-      { upsert: true, new: true, projection: { _id: 0 } }
+      { $inc: { oldBalance: 100, newBalance: 10, oldPoint: 0, newPoint: 0 }, $set: { test: 'false', wow: 'e' } }
+      // { upsert: true, new: true, projection: { _id: 0 } }
     )
     console.log(`---------- CHECK result ----------`, result)
 
     console.log(await BalanceHistory.find({}, { _id: 0 }))
-    */
 
     
 

@@ -9,6 +9,7 @@ function b() {
     resolve('b')
   })
 }
+/*
 
 
 async function c() {
@@ -40,3 +41,25 @@ async function e() {
 }
 
 e()
+*/
+
+async function TPA() { 
+  let queues = []
+  queues.push(a())
+  queues.push(a())
+  queues.push(a())
+  queues.push(b())
+  queues.push(a())
+  queues.push(a())
+
+  try {
+    // Promise.all(queues).then((obj) => console.log(obj)).catch(err => console.error('에러 ', err))
+    const res = await Promise.all(queues)
+    console.log(`---------- CHECK res 2 ----------`, res)
+  } catch (err) {
+    console.log(`---------- CHECK err ----------`, err)
+  }
+}
+
+TPA()
+

@@ -496,6 +496,29 @@ let op = {
 }
 console.log(JSON.stringify(op))
 
-let cc = "{\"message\": \"[ { type: \"a\" } ]\"}"
-console.log(JSON.parse(cc))
 
+/**
+ * 전달 데이트값을 리턴
+ */
+const getLastMonth  = () => {
+  const date = new Date()
+  date.setDate(0)
+  date.setHours(0)
+  date.setMinutes(0)
+  date.setSeconds(0)
+  date.setMilliseconds(0)
+  return date
+}
+
+
+const startDate = getLastMonth()
+startDate.setDate(1)
+const endDate = getLastMonth()
+console.log(`---------- CHECK startDate ----------`, startDate)
+console.log(`---------- CHECK endDate ----------`, endDate)
+
+
+
+let test1 = { abcl: { opp: 'test' } }
+let { abcl: opp } = test1
+console.log(`---------- CHECK abcl ----------`, opp)

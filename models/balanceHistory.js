@@ -61,7 +61,8 @@ const balanceHistorySchema = new mongoose.Schema({
       null,
       'MT'
     ]
-  }
+  },
+  test: { type: Boolean }
 }, {
   id: false,
   versionKey: false,
